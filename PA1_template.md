@@ -5,7 +5,7 @@ Human Activity Recognition Using Smartphones Data Set
 
 Author: Thomas Berger (https://github.com/bergertom/ReproducibleResearch1.git)
 
-This analysis was generated on 2016-02-03 16:36:48 by running the script ``run_PA1_template.R``.
+This analysis was generated on 2016-02-04 08:50:08 by running the script ``run_PA1_template.R``.
 
 1. Load and preprocess the data
 -------------------------------
@@ -129,7 +129,7 @@ for (dt in missing_days) {
 }
 ```
 
-For example the 5-minute number 2355 mean value is 1.0754717 
+For example the 5-minute interval 2355 imputed mean value is 1.0754717 
 which is rounded to 1 
 
 6. Compare imputed data with raw data
@@ -151,54 +151,7 @@ legend("topright", c("Imputed", "raw-data"), col=c("blue", "green"), lwd=10)
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png) 
 
-6. Compare mean and median steps using imputed data
----------------------------------------------------
-
-Make a histogram of the total number of steps taken each day and calculate and report the
-mean and median total number of steps taken per day. Do these values differ from the estimates
-from the first part of the assignment? 
-
-What is the impact of imputing missing data on the estimates of the total daily number of steps?
-
-```r
-# aggregate average number of steps by interval
-steps_by_interval <- aggregate(steps ~ interval, clean_data, mean)
-steps_by_interval_imp <- aggregate(steps ~ interval, imputed_data, mean)
-
-# compute the difference between clean and imputed data
-steps_by_interval_diff <- data.frame (interval = steps_by_interval$interval,
-     steps_clean   = steps_by_interval$steps,
-     steps_imputed = steps_by_interval_imp$steps,
-     steps_delta = abs(steps_by_interval_imp$steps - steps_by_interval$steps))
-# calculate the max steps
-steps_by_interval_diff$steps_max <- apply(steps_by_interval_diff[,c("steps_clean","steps_imputed")],1,max)
-# calculate the percentage
-steps_by_interval_diff <- transform(steps_by_interval_diff, percent = (steps_delta / steps_max) * 100)
-# if steps are zero, percentage is NaN; set percentage zero
-steps_by_interval_diff[steps_by_interval_diff$steps_clean == 0, "percent"] <- 0
-
-# maximal difference between imputed mean steps
-max(steps_by_interval_diff$steps_delta)
-```
-
-```
-## [1] 0.06433653
-```
-
-```r
-# plot the difference by steps per day by interval
-qplot(interval, percent, data=steps_by_interval_diff, main="Percentage change of Imputed data per interval")
-```
-
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png) 
-
-The imputed steps differs with a maximum variance of 0.0643365 from the the original data.
-The max difference is 13.1147541 percent.
-When we look at the chart, the difference of 13% is in the interval between (0-500) and after 2000.
-
-The impact of imputing missing data on the estimates of the total daily number needs to be considered when the number of steps is small (below 10), as such the difference on the plot of average number of steps per day is not visible.
-
-7. Analyze weekdays and weekends
+6. Analyze weekdays and weekends
 --------------------------------
 
 Are there differences in activity patterns between weekdays and weekends?
@@ -220,7 +173,7 @@ xyplot(steps_by_interval_week$steps ~ steps_by_interval_week$interval|steps_by_i
        main="Average Steps per Day by Interval",xlab="Interval", ylab="Number of steps",layout=c(1,2), type="l")
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png) 
 
 The plot to compares the number of steps during the week and weekend.
 On the weekdays there is a higher peak earlier, but there is more overall activity on weekends.
